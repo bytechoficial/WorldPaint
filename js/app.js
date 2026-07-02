@@ -1,13 +1,3 @@
-if (typeof CONFIG === 'undefined') {
-  document.body.innerHTML = `
-    <div style="text-align:center;margin-top:80px;font-family:sans-serif;padding:20px">
-      <h1>WorldPaint</h1>
-      <p>Crie o arquivo <code>config.js</code> baseado no <code>config.example.js</code>
-      com seu token do GitHub.</p>
-    </div>`;
-  throw new Error('config.js n\u00e3o encontrado');
-}
-
 const CELL_SIZE = 0.001;
 const MIN_ZOOM_FOR_DRAWING = 12;
 let map, currentUser = null, drawingsMeta = [], markers = [];
@@ -18,7 +8,11 @@ let currentTool = 'freehand', currentColor = '#ff0000', brushSize = 3, isEraser 
 
 const $ = id => document.getElementById(id);
 
-async function init() {
+async function initApp() {
+  if (!api.hasValidConfig()) {
+    $('setup-modal').style.display = '';
+    return;
+  }
   await auth.init();
   currentUser = auth.currentUser;
   await loadDrawingsMeta();
@@ -26,6 +20,24 @@ async function init() {
   initAuthUI();
   initDrawingUI();
   updateAuthUI();
+}
+
+function saveSetup() {
+  const token = $('setup-token').value.trim();
+  const owner = $('setup-owner').value.trim();
+  const repo = $('setup-repo').value.trim();
+  if (!token || !owner || !repo) { showToast('Preencha todos os campos'); return; }
+  localStorage.setItem('worldpaint_config', JSON.stringify({
+    GITHUB_TOKEN: token,
+    GITHUB_OWNER: owner,
+    GITHUB_REPO: repo,
+    DRAWING_SIZE: 200,
+    PIXEL_SIZE: 10,
+  }));
+  api.reloadConfig();
+  $('setup-modal').style.display = 'none';
+  showToast('Configuracao salva!');
+  initApp();
 }
 
 async function loadDrawingsMeta() {
@@ -44,7 +56,7 @@ async function saveDrawingsMeta() {
   for (let attempt = 0; attempt < 5; attempt++) {
     try {
       const file = await api.getFile('data/drawings_index.json');
-      if (!file) throw new Error('Index n\u00e3o encontrado');
+      if (!file) throw new Error('Index nao encontrado');
       await api.updateFile(
         'data/drawings_index.json',
         JSON.stringify({ drawings: meta }, null, 2),
@@ -55,7 +67,7 @@ async function saveDrawingsMeta() {
       if (!e.message.includes('SHA')) throw e;
     }
   }
-  throw new Error('Erro ao salvar \u00edndice');
+  throw new Error('Erro ao salvar indice');
 }
 
 function initMap() {
@@ -68,7 +80,7 @@ function initMap() {
   drawingsMeta.forEach(d => addMarker(d));
 
   map.on('click', e => {
-    if (!currentUser) { showToast('Fa\u00e7a login para desenhar!'); return; }
+    if (!currentUser) { showToast('Faca login para desenhar!'); return; }
     if (map.getZoom() < MIN_ZOOM_FOR_DRAWING) { showToast('Aproxime mais do mapa!'); return; }
 
     const lat = Math.round(e.latlng.lat / CELL_SIZE) * CELL_SIZE;
@@ -76,7 +88,7 @@ function initMap() {
     const cellKey = `${lat},${lng}`;
 
     if (drawingsMeta.some(d => d.cellKey === cellKey)) {
-      showToast('Este local j\u00e1 tem um desenho!');
+      showToast('Este local ja tem um desenho!');
       return;
     }
 
@@ -122,7 +134,7 @@ async function deleteDrawing(id) {
     const file = await api.getFile(`data/drawings/${id}.json`);
     if (file) {
       await api.request('DELETE',
-        `/repos/${CONFIG.GITHUB_OWNER}/${CONFIG.GITHUB_REPO}/contents/data/drawings/${id}.json`,
+        `/repos/${api.owner}/${api.repo}/contents/data/drawings/${id}.json`,
         { message: 'WorldPaint: excluir desenho', sha: file.sha }
       );
     }
@@ -133,7 +145,7 @@ async function deleteDrawing(id) {
   markers.forEach(m => map.removeLayer(m));
   markers = [];
   drawingsMeta.forEach(d => addMarker(d));
-  showToast('Desenho exclu\u00eddo!');
+  showToast('Desenho excluido!');
 }
 
 function initAuthUI() {
@@ -143,7 +155,7 @@ function initAuthUI() {
     auth.logout();
     currentUser = null;
     updateAuthUI();
-    showToast('Sess\u00e3o encerrada');
+    showToast('Sessao encerrada');
   };
   $('auth-modal-close').onclick = () => $('auth-modal').style.display = 'none';
   $('auth-form').onsubmit = async e => {
@@ -319,7 +331,7 @@ function drawPixelGridLines() {
 }
 
 async function saveDrawing() {
-  if (!currentUser) { showToast('Fa\u00e7a login primeiro!'); return; }
+  if (!currentUser) { showToast('Faca login primeiro!'); return; }
 
   const canvasData = drawingCanvas.toDataURL('image/png');
   const id = crypto.randomUUID ? crypto.randomUUID() :
@@ -362,4 +374,9 @@ function showToast(msg) {
   toast._timer = setTimeout(() => toast.className = 'toast', 3000);
 }
 
-document.addEventListener('DOMContentLoaded', init);
+$('setup-btn-save').onclick = saveSetup;
+$('setup-token').value = CONFIG.GITHUB_TOKEN || '';
+$('setup-owner').value = CONFIG.GITHUB_OWNER || '';
+$('setup-repo').value = CONFIG.GITHUB_REPO || '';
+
+document.addEventListener('DOMContentLoaded', initApp);
