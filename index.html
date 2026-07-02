@@ -22,7 +22,24 @@
 
   <div id="map"></div>
 
-  <div id="instructions">🌍 Clique no mapa para desenhar!</div>
+  <div id="setup-modal" class="modal" style="display:none">
+    <div class="modal-content" style="max-width:460px">
+      <h2>Configurar WorldPaint</h2>
+      <p style="margin-bottom:16px;color:#aaa;font-size:14px">
+        Informe seu token do GitHub e o reposit&oacute;rio onde os dados ser&atilde;o armazenados.
+      </p>
+      <div id="setup-form" style="display:flex;flex-direction:column;gap:12px">
+        <input type="text" id="setup-token" placeholder="GitHub Personal Access Token" style="padding:10px 14px;border:1px solid rgba(255,255,255,0.15);border-radius:8px;background:rgba(255,255,255,0.06);color:#eee;font-size:14px;outline:none;font-family:monospace">
+        <div style="display:flex;gap:8px">
+          <input type="text" id="setup-owner" placeholder="Owner (usuário)" style="flex:1;padding:10px 14px;border:1px solid rgba(255,255,255,0.15);border-radius:8px;background:rgba(255,255,255,0.06);color:#eee;font-size:14px;outline:none">
+          <input type="text" id="setup-repo" placeholder="Repositório" style="flex:1;padding:10px 14px;border:1px solid rgba(255,255,255,0.15);border-radius:8px;background:rgba(255,255,255,0.06);color:#eee;font-size:14px;outline:none">
+        </div>
+        <button id="setup-btn-save" style="padding:10px;border:none;border-radius:8px;background:linear-gradient(135deg,#ff6b6b,#ffa502);color:#fff;font-size:15px;font-weight:700;cursor:pointer">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="instructions">Clique no mapa para desenhar!</div>
   <div class="toast" id="toast"></div>
 
   <div class="modal" id="auth-modal" style="display:none">
