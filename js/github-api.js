@@ -1,3 +1,11 @@
+function getConfig() {
+  const stored = localStorage.getItem('worldpaint_config');
+  if (stored) {
+    try { return JSON.parse(stored); } catch (_) {}
+  }
+  return CONFIG;
+}
+
 function encodeBase64(str) {
   const encoder = new TextEncoder();
   const data = encoder.encode(str);
@@ -16,14 +24,27 @@ function decodeBase64(str) {
 
 class GitHubAPI {
   constructor() {
-    this.token = CONFIG.GITHUB_TOKEN;
-    this.owner = CONFIG.GITHUB_OWNER;
-    this.repo = CONFIG.GITHUB_REPO;
+    this.cfg = getConfig();
+    this.token = this.cfg.GITHUB_TOKEN;
+    this.owner = this.cfg.GITHUB_OWNER;
+    this.repo = this.cfg.GITHUB_REPO;
     this.baseUrl = 'https://api.github.com';
     this.headers = {
       'Authorization': `Bearer ${this.token}`,
       'Accept': 'application/vnd.github.v3+json',
     };
+  }
+
+  reloadConfig() {
+    this.cfg = getConfig();
+    this.token = this.cfg.GITHUB_TOKEN;
+    this.owner = this.cfg.GITHUB_OWNER;
+    this.repo = this.cfg.GITHUB_REPO;
+    this.headers['Authorization'] = `Bearer ${this.token}`;
+  }
+
+  hasValidConfig() {
+    return this.token && this.token.length > 10 && this.owner && this.repo;
   }
 
   async request(method, path, body = null) {
