@@ -8,6 +8,15 @@
       "author": "yan",
       "createdAt": "2026-07-02T20:09:35.295Z",
       "type": "pixel"
+    },
+    {
+      "id": "f742ba85-0eba-4413-a87d-a13bd6df48ac",
+      "cellKey": "-5.22,-59.665",
+      "lat": -5.22,
+      "lng": -59.665,
+      "author": "yan2",
+      "createdAt": "2026-07-02T20:14:19.198Z",
+      "type": "pixel"
     }
   ]
 }
