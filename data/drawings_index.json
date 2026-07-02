@@ -17,6 +17,15 @@
       "author": "yan2",
       "createdAt": "2026-07-02T20:14:19.198Z",
       "type": "pixel"
+    },
+    {
+      "id": "a04e9815-7f89-452a-b3fa-7d31244b5a7a",
+      "cellKey": "-5.255,-59.67",
+      "lat": -5.255,
+      "lng": -59.67,
+      "author": "yan",
+      "createdAt": "2026-07-02T22:15:47.435Z",
+      "type": "freehand"
     }
   ]
 }
