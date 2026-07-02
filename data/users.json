@@ -1,1 +1,9 @@
-{"users":[]}
+{
+  "users": [
+    {
+      "username": "yan",
+      "passwordHash": "30a0a7a765c001d61a5dac0ac61cbb40dbe9459a25182f69b4f5c48d2ccda5ee",
+      "createdAt": "2026-07-02T20:08:49.184Z"
+    }
+  ]
+}
