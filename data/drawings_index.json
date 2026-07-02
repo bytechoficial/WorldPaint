@@ -1,1 +1,13 @@
-{"drawings":[]}
+{
+  "drawings": [
+    {
+      "id": "aabe0aec-5a6c-4c58-87f6-7e498d760a66",
+      "cellKey": "-5.218,-59.665",
+      "lat": -5.218,
+      "lng": -59.665,
+      "author": "yan",
+      "createdAt": "2026-07-02T20:09:35.295Z",
+      "type": "pixel"
+    }
+  ]
+}
